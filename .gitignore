@@ -1,0 +1,34 @@
+# === CLion and CMake build directories ===
+cmake-build-*/
+
+# === User-specific IDE settings ===
+.idea/
+*.iml
+
+# === System-specific files ===
+.DS_Store
+Thumbs.db
+
+# === Compiled binaries and object files ===
+*.exe         # <-- This will ignore main.exe and other binaries
+*.dll
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+
+# === CMake-generated files ===
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+build.ninja
+rules.ninja
+compile_commands.json
+Testing/
+
+# === Backup and swap files ===
+*~
+*.swp
+*.swo
