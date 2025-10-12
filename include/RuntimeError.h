@@ -1,3 +1,6 @@
+#pragma once
+#include "../Utils/Utils.h"
+
 class RuntimeError
 {
     std::string errorMessage;
@@ -6,19 +9,17 @@ class RuntimeError
     explicit RuntimeError(const std::string &errorMessage)
     {
         throw std::runtime_error(Utils::makeRed(errorMessage));
-        exit(EXIT_FAILURE);
     }
 
-    void setErrorMessage(const std::string &errorMessage)
+    void setErrorMessage(const std::string &message)
     {
-        this->errorMessage = errorMessage;
+        this->errorMessage = message;
     }
 
-    void throwError()
+    void throwError() const
     {
         if (errorMessage.empty())
             return;
         throw std::runtime_error(Utils::makeRed(errorMessage));
-        exit(EXIT_FAILURE);
     }
 };

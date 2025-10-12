@@ -1,12 +1,8 @@
 #pragma once
 #include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <list>
 #include <map>
 #include <string>
 #include "JsonToken.h"
-#include "../Utils/Utils.h"
 
 
 class LexicalAnalyzer
@@ -17,31 +13,33 @@ class LexicalAnalyzer
     size_t pos, length;
 
     public:
-    explicit LexicalAnalyzer(std::string fileData): json(fileData), pos(0), length(json.size()) {}
+    explicit LexicalAnalyzer(const std::string &fileData): json(fileData), pos(0), length(json.size()) {}
 
     Token getNextToken()
     {
         skipWhitespace();
+        if (pos == length)
+            return {TokenType::EOF_TOK, "EOF"};
         switch (json[pos])
         {
             case '{':
                 pos++;
-                return Token(TokenType::LEFT_BRACE, "{");
+                return {TokenType::LEFT_BRACE, "{"};
             case '}':
                 pos++;
-                return Token(TokenType::RIGHT_BRACE, "}");
+                return {TokenType::RIGHT_BRACE, "}"};
             case ',':
                 pos++;
-                return Token(TokenType::COMMA, ",");
+                return {TokenType::COMMA, ","};
             case '\"':
                 pos++;
-                return Token(TokenType::INVERTED_COMMA, "\"");
+                return {TokenType::INVERTED_COMMA, "\""};
             case ':':
                 pos++;
-                return Token(TokenType::COLON, ":");
+                return {TokenType::COLON, ":"};
             case '\n':
                 pos++;
-                return Token(TokenType::EOF_TOK, "\n");
+                return {TokenType::EOF_TOK, "\n"};
             default:
             {
                 if (isdigit(json[pos]))
@@ -50,14 +48,14 @@ class LexicalAnalyzer
                     std::string tmpStr;
                     while (isdigit(json[pos]))
                         tmpStr += std::to_string(json[pos++] - '0');
-                    return Token(TokenType::NUMBER, tmpStr);
+                    return {TokenType::NUMBER, tmpStr};
                 }
                 else if (isalpha(json[pos]))
                 {
                     std::string tempValue;
                     while (json[pos] != '\"' && isalnum(json[pos]))
                         tempValue += json[pos++];
-                    return Token(TokenType::STRING, tempValue);
+                    return {TokenType::STRING, tempValue};
                 }
             }
         }
@@ -70,14 +68,22 @@ class LexicalAnalyzer
             pos++;
     }
 
+    void resetLexicalAnalyzer() {
+        pos = 0;
+        jsonDataMap.clear();
+    }
+
+    //for debugging
     void printAllTokens()
     {
-        TokenType tmpType;
-        while (tmpType != TokenType::RIGHT_BRACE && tmpType != TokenType::INVALID)
+        resetLexicalAnalyzer();
+        Token tmpTkn = getNextToken();
+        TokenType tmpType = tmpTkn.type;
+        while (tmpType != TokenType::EOF_TOK && tmpType != TokenType::INVALID)
         {
-            Token tmpTkn = getNextToken();
-            tmpType = tmpTkn.type;
             std::cout << tmpType << " " << tmpTkn.value << "\n";
+            tmpTkn = getNextToken();
+            tmpType = tmpTkn.type;
         }
     }
 

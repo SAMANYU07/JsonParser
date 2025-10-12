@@ -5,7 +5,6 @@
 #include <list>
 #include <map>
 #include <string>
-#include "JsonMetaData.h"
 #include "LexicalAnalyzer.h"
 #include "RuntimeError.h"
 
@@ -20,13 +19,11 @@ class JsonParser
     public:
     explicit JsonParser(const std::string &fileLocation)
     {
-        std::filesystem::path filePath = fileLocation;
-        if (!std::filesystem::exists(filePath))
+        if (const std::filesystem::path filePath = fileLocation; !std::filesystem::exists(filePath))
             return;
         fileStream.open(fileLocation);
         if (!readJson())
             return;
-        JsonMetaData jsonMetaData(fileStream, fileData, fileName);
         parseInit();
         
     }
@@ -35,11 +32,10 @@ class JsonParser
     {
         LexicalAnalyzer lex(fileData);
         //check first {
-        Token firstBrace = lex.getNextToken();
-        if (!firstBrace.typeOf(TokenType::LEFT_BRACE))
+        if (!lex.getNextToken().typeOf(TokenType::LEFT_BRACE))
             throwParsingError("{ expected in beginning of json\n");
         Token nextToken = lex.getNextToken();
-        while (nextToken.type != TokenType::RIGHT_BRACE && nextToken.type != TokenType::INVALID)
+        while (nextToken.type != TokenType::EOF_TOK && nextToken.type != TokenType::INVALID)
         {
             if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
                 throwParsingError("\" expected before string in lhs");
@@ -61,7 +57,7 @@ class JsonParser
             {
                 nextToken = lex.getNextToken();
                 if (!nextToken.typeOf(TokenType::STRING))
-                throwParsingError("String expected after \" in rhs");
+                    throwParsingError("String expected after \" in rhs");
                 rhsVal = nextToken.value;
                 nextToken = lex.getNextToken();
                 if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
@@ -73,9 +69,9 @@ class JsonParser
                 rhsVal = nextToken.value;
             }
             else
-            throwParsingError("Unfamilier complex value given\n");
+            throwParsingError("Unfamiliar complex value given\n");
             nextToken = lex.getNextToken();
-            if (nextToken.typeOf(TokenType::COMMA))
+            if (nextToken.typeOf(TokenType::COMMA) || nextToken.typeOf(TokenType::RIGHT_BRACE))
                 nextToken = lex.getNextToken();
             else if (!nextToken.typeOf(TokenType::RIGHT_BRACE))
                 throwParsingError("Comma(,) expected after a value");
@@ -97,14 +93,14 @@ class JsonParser
         return true;
     }
 
-    void throwParsingError(const std::string &errorMessage) const
+    static void throwParsingError(const std::string &errorMessage)
     {
         RuntimeError("Parsing error: " + errorMessage);
     }
 
     std::string getValue(const std::string &key) const
     {
-        if (jsonDataMap.find(key) == jsonDataMap.end())
+        if (!jsonDataMap.contains(key))
             return "";
         return jsonDataMap.at(key);
     }
@@ -113,8 +109,8 @@ class JsonParser
     {
         if (jsonDataMap.empty())
             return;
-        for (auto it = jsonDataMap.begin(); it != jsonDataMap.end(); ++it)
-            std::cout << it->first << " = " << it->second << "\n";
+        for (const auto &[key, value]: jsonDataMap)
+            std::cout << key << " = " << value << "\n";
     }
     std::map<std::string, std::string>& getJsonDataMap()
     {

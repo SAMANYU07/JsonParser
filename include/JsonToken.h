@@ -19,23 +19,23 @@ enum class TokenType
 
 struct Token
 {
-    TokenType type;
+    TokenType type = TokenType::INVALID;
     std::string value;
 
     Token() = default;
 
-    Token(TokenType type, std::string value): type(type), value(value) {}
+    Token(const TokenType type, std::string value): type(type), value(std::move(value)) {}
 
-    bool typeOf(const TokenType &type)
+    [[nodiscard]] bool typeOf(const TokenType &tokenType) const
     {
-        if (this->type == type)
+        if (this->type == tokenType)
             return true;
         return false;
     }
 
-    void setValue(const std::string &value)
+    void setValue(const std::string &newValue)
     {
-        this->value = value;
+        this->value = newValue;
     }
 
     void setType(const TokenType &tokenType)
