@@ -35,47 +35,49 @@ class JsonParser
         if (!lex.getNextToken().typeOf(TokenType::LEFT_BRACE))
             throwParsingError("{ expected in beginning of json\n");
         Token nextToken = lex.getNextToken();
+        int line = 1;
         while (nextToken.type != TokenType::EOF_TOK && nextToken.type != TokenType::INVALID)
         {
-            if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
-                throwParsingError("\" expected before string in lhs");
-            nextToken = lex.getNextToken();
-            if (!nextToken.typeOf(TokenType::STRING))
-                throwParsingError("String expected after \" in lhs");
+            if (!nextToken.typeOf(TokenType::INVERTED_COMMA) && !nextToken.typeOf(TokenType::STRING))
+                throwParsingError("\" expected before string in lhs", line);
             std::string lhsVal = nextToken.value;
             nextToken = lex.getNextToken();
-            if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
-                throwParsingError("closing \" expected after String in lhs");
-            nextToken = lex.getNextToken();
+            // if (!nextToken.typeOf(TokenType::STRING))
+            //     throwParsingError("String expected after \" in lhs", line);
             if (!nextToken.typeOf(TokenType::COLON))
-                throwParsingError(": expected after key");
+                throwParsingError(": expected after key", line);
+            // nextToken = lex.getNextToken();
+            // if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
+            //     throwParsingError("closing \" expected after String in lhs", line);
+            // nextToken = lex.getNextToken();
             nextToken = lex.getNextToken();
 
             //val is string
             std::string rhsVal;
-            if (nextToken.typeOf(TokenType::INVERTED_COMMA))
-            {
-                nextToken = lex.getNextToken();
-                if (!nextToken.typeOf(TokenType::STRING))
-                    throwParsingError("String expected after \" in rhs");
-                rhsVal = nextToken.value;
-                nextToken = lex.getNextToken();
-                if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
-                    throwParsingError("\" is expected after string in rhs");
-            }
+            // if (nextToken.typeOf(TokenType::STRING))
+            // {
+            //     nextToken = lex.getNextToken();
+            //     if (!nextToken.typeOf(TokenType::STRING) && !nextToken.typeOf(TokenType::NUMBER))
+            //         throwParsingError("String expected after \" in rhs", line);
+            //     rhsVal = nextToken.value;
+            //     nextToken = lex.getNextToken();
+            //     if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
+            //         throwParsingError("\" is expected after string in rhs", line);
+            // }
             //else rhs is num
-            else if (nextToken.typeOf(TokenType::NUMBER))
+            if (nextToken.typeOf(TokenType::NUMBER) || nextToken.typeOf(TokenType::STRING))
             {
                 rhsVal = nextToken.value;
             }
             else
-            throwParsingError("Unfamiliar complex value given\n");
+            throwParsingError("Unfamiliar complex value given\n", line);
             nextToken = lex.getNextToken();
             if (nextToken.typeOf(TokenType::COMMA) || nextToken.typeOf(TokenType::RIGHT_BRACE))
                 nextToken = lex.getNextToken();
             else if (!nextToken.typeOf(TokenType::RIGHT_BRACE))
-                throwParsingError("Comma(,) expected after a value");
+                throwParsingError("Comma(,) expected after a value", line);
             jsonDataMap.insert(std::pair<std::string, std::string>(lhsVal, rhsVal));
+            line++;
         }
         if (nextToken.typeOf(TokenType::INVALID))
             throwParsingError("Invalid JSON");
@@ -93,9 +95,13 @@ class JsonParser
         return true;
     }
 
-    static void throwParsingError(const std::string &errorMessage)
+    static void throwParsingError(const std::string &errorMessage) {
+        throwParsingError(errorMessage, -1);
+    }
+
+    static void throwParsingError(const std::string &errorMessage, const int lineNo)
     {
-        RuntimeError("Parsing error: " + errorMessage);
+        RuntimeError("Parsing error: " + errorMessage + (lineNo != -1 ? " at line: " + std::to_string(lineNo) : ""));
     }
 
     std::string getValue(const std::string &key) const

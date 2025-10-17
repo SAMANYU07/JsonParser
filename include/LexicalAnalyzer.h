@@ -32,8 +32,14 @@ class LexicalAnalyzer
                 pos++;
                 return {TokenType::COMMA, ","};
             case '\"':
+            {
                 pos++;
-                return {TokenType::INVERTED_COMMA, "\""};
+                std::string tempValue;
+                while (json[pos] != '\"')
+                    tempValue += json[pos++];
+                pos++;
+                return {TokenType::STRING, tempValue};
+            }
             case ':':
                 pos++;
                 return {TokenType::COLON, ":"};
@@ -50,10 +56,10 @@ class LexicalAnalyzer
                         tmpStr += std::to_string(json[pos++] - '0');
                     return {TokenType::NUMBER, tmpStr};
                 }
-                else if (isalpha(json[pos]))
+                else if (isalnum(json[pos]))
                 {
                     std::string tempValue;
-                    while (json[pos] != '\"' && isalnum(json[pos]))
+                    while (json[pos] != '\"')
                         tempValue += json[pos++];
                     return {TokenType::STRING, tempValue};
                 }
