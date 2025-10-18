@@ -12,6 +12,7 @@ add_library(JsonParser
         include/JsonToken.h
         include/LexicalAnalyzer.h
         include/RuntimeError.h
+        Utils/ExecutionTimer.h
 )
 
 # Add executable (main.cpp is here, contains the entry point)

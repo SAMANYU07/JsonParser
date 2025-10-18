@@ -48,10 +48,12 @@ class LexicalAnalyzer
                 return {TokenType::EOF_TOK, "\n"};
             default:
             {
-                if (isdigit(json[pos]))
+                if (isdigit(json[pos]) || json[pos] == '-')
                 {
                     // pos++;
                     std::string tmpStr;
+                    if (json[pos] == '-')
+                        tmpStr += json[pos++];
                     while (isdigit(json[pos]) || json[pos] == '.')
                     {
                         if (json[pos] == '.')

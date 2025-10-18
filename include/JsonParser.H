@@ -7,6 +7,7 @@
 #include <string>
 #include "LexicalAnalyzer.h"
 #include "RuntimeError.h"
+#include "../Utils/ExecutionTimer.h"
 
 class JsonParser
 {
@@ -17,15 +18,22 @@ class JsonParser
     std::list<Token> tokenList;
     std::string fileName;
     public:
-    explicit JsonParser(const std::string &fileLocation)
+
+    explicit JsonParser(const std::string &fileLocation): JsonParser(fileLocation, false){};
+
+    explicit JsonParser(const std::string &fileLocation, const bool &monitorParsingTime): JsonParser(fileLocation, monitorParsingTime, false){};
+
+    explicit JsonParser(const std::string &fileLocation, const bool &monitorParsingTime, const bool &restoreCout)
     {
         if (const std::filesystem::path filePath = fileLocation; !std::filesystem::exists(filePath))
             return;
         fileStream.open(fileLocation);
         if (!readJson())
             return;
+        if (monitorParsingTime)
+            ExecutionTimer timer(restoreCout);
         parseInit();
-        
+
     }
 
     void parseInit()
