@@ -65,12 +65,13 @@ class JsonParser
             //         throwParsingError("\" is expected after string in rhs", line);
             // }
             //else rhs is num
-            if (nextToken.typeOf(TokenType::NUMBER) || nextToken.typeOf(TokenType::STRING))
+            if (nextToken.typeOf(TokenType::NUMBER) || nextToken.typeOf(TokenType::STRING)
+                || nextToken.typeOf(TokenType::FALSE_TOK) || nextToken.typeOf(TokenType::TRUE_TOK))
             {
                 rhsVal = nextToken.value;
             }
             else
-            throwParsingError("Unfamiliar complex value given\n", line);
+                throwParsingError("Unfamiliar complex value given\n", line);
             nextToken = lex.getNextToken();
             if (nextToken.typeOf(TokenType::COMMA) || nextToken.typeOf(TokenType::RIGHT_BRACE))
                 nextToken = lex.getNextToken();

@@ -4,7 +4,7 @@
 int main()
 {
     JsonParser parser("sample.json");
-    // std::cout << parser.getValue("age");
     parser.printAllTokens();
+    std::cout << parser.getValue("isStudent");
     return 0;
 }

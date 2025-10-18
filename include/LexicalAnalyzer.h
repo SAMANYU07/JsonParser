@@ -59,9 +59,16 @@ class LexicalAnalyzer
                 else if (isalnum(json[pos]))
                 {
                     std::string tempValue;
-                    while (json[pos] != '\"')
+                    while (json[pos] != '\"' && isalnum(json[pos]))
+                    {
                         tempValue += json[pos++];
-                    return {TokenType::STRING, tempValue};
+                    }
+                    if (json[pos] == '\"')
+                        return {TokenType::STRING, tempValue};
+                    else if (tempValue == "true")
+                        return {TokenType::TRUE_TOK, tempValue};
+                    else if (tempValue == "false")
+                        return {TokenType::FALSE_TOK, tempValue};
                 }
             }
         }
