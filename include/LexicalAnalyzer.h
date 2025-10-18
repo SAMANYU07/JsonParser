@@ -76,6 +76,8 @@ class LexicalAnalyzer
                         return {TokenType::TRUE_TOK, tempValue};
                     else if (tempValue == "false")
                         return {TokenType::FALSE_TOK, tempValue};
+                    else if (tempValue == "null")
+                        return {TokenType::NULL_TOK, tempValue};
                 }
             }
         }

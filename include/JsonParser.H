@@ -74,7 +74,8 @@ class JsonParser
             // }
             //else rhs is num
             if (nextToken.typeOf(TokenType::NUMBER) || nextToken.typeOf(TokenType::STRING)
-                || nextToken.typeOf(TokenType::FALSE_TOK) || nextToken.typeOf(TokenType::TRUE_TOK))
+                || nextToken.typeOf(TokenType::FALSE_TOK) || nextToken.typeOf(TokenType::TRUE_TOK)
+                || nextToken.typeOf(TokenType::NULL_TOK))
             {
                 rhsVal = nextToken.value;
             }
