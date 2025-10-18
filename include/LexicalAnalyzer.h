@@ -52,8 +52,13 @@ class LexicalAnalyzer
                 {
                     // pos++;
                     std::string tmpStr;
-                    while (isdigit(json[pos]))
-                        tmpStr += std::to_string(json[pos++] - '0');
+                    while (isdigit(json[pos]) || json[pos] == '.')
+                    {
+                        if (json[pos] == '.')
+                            tmpStr += json[pos++];
+                        else
+                            tmpStr += std::to_string(json[pos++] - '0');
+                    }
                     return {TokenType::NUMBER, tmpStr};
                 }
                 else if (isalnum(json[pos]))

@@ -35,7 +35,7 @@ class JsonParser
         if (!lex.getNextToken().typeOf(TokenType::LEFT_BRACE))
             throwParsingError("{ expected in beginning of json\n");
         Token nextToken = lex.getNextToken();
-        int line = 1;
+        int line = 2;
         while (nextToken.type != TokenType::EOF_TOK && nextToken.type != TokenType::INVALID)
         {
             if (!nextToken.typeOf(TokenType::INVERTED_COMMA) && !nextToken.typeOf(TokenType::STRING))
