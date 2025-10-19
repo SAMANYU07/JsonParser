@@ -3,7 +3,7 @@
 
 int main()
 {
-    JsonParser parser("sample.json", false);
+    JsonParser parser("sample.json", true);
     parser.printAllTokens();
     std::cout << parser.getValue("isStudent");
     return 0;

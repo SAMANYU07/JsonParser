@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include "JsonToken.h"
+#include "../Utils/Utils.h"
 
 
 class LexicalAnalyzer
@@ -35,7 +36,7 @@ class LexicalAnalyzer
             {
                 pos++;
                 std::string tempValue;
-                while (json[pos] != '\"')
+                while (!Utils::isEndOfString(json, pos))
                     tempValue += json[pos++];
                 pos++;
                 return {TokenType::STRING, tempValue};
@@ -66,7 +67,7 @@ class LexicalAnalyzer
                 else if (isalnum(json[pos]))
                 {
                     std::string tempValue;
-                    while (json[pos] != '\"' && isalnum(json[pos]))
+                    while ((json[pos] != '\"' && json[pos - 1] != '\\') && isalnum(json[pos]))
                     {
                         tempValue += json[pos++];
                     }
@@ -107,6 +108,10 @@ class LexicalAnalyzer
             tmpTkn = getNextToken();
             tmpType = tmpTkn.type;
         }
+        if (tmpType == TokenType::EOF_TOK)
+            std::cout << tmpType << " " << tmpTkn.value << "\n";
+        else
+            std::cout << "Something is wrong\n";
     }
 
 };
