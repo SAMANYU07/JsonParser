@@ -121,6 +121,13 @@ class JsonParser
         return jsonDataMap.at(key);
     }
 
+    std::string operator [] (const std::string &key) const
+    {
+        if (!jsonDataMap.contains(key))
+            return "";
+        return jsonDataMap.at(key);
+    }
+
     void printParsedJson() const
     {
         if (jsonDataMap.empty())
