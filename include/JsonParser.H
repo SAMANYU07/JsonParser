@@ -47,7 +47,7 @@ class JsonParser
         while (nextToken.type != TokenType::EOF_TOK && nextToken.type != TokenType::INVALID)
         {
             if (!nextToken.typeOf(TokenType::INVERTED_COMMA) && !nextToken.typeOf(TokenType::STRING))
-                throwParsingError("\" expected before string in lhs", line);
+                throwParsingError("Unexpected token found before key\n(\") expected before key", line);
             nextToken = lex.getNextToken();
             if (!nextToken.typeOf(TokenType::STRING))
             throwParsingError("String expected after \" in lhs", line);
@@ -65,8 +65,12 @@ class JsonParser
             if (nextToken.typeOf(TokenType::INVERTED_COMMA))
             {
                 nextToken = lex.getNextToken();
+                if (nextToken.typeOf(TokenType::INVALID))
+                    throwParsingError(nextToken.value, line);
+                else if (!nextToken.typeOf(TokenType::STRING))
+                    throwParsingError("Something went wrong!", line);
                 rhsVal = nextToken.value;
-                nextToken = lex.getNextToken();
+                lex.getNextToken();
             }
             //else rhs is num
             else if (nextToken.typeOf(TokenType::NUMBER)
@@ -75,11 +79,17 @@ class JsonParser
             {
                 rhsVal = nextToken.value;
             }
+            else if (nextToken.typeOf(TokenType::INVALID) && nextToken.value != "INVALID")
+                throwParsingError(nextToken.value, line);
             else
                 throwParsingError("Unfamiliar complex value given\n", line);
             nextToken = lex.getNextToken();
             if (nextToken.typeOf(TokenType::COMMA) || nextToken.typeOf(TokenType::RIGHT_BRACE))
+            {
                 nextToken = lex.getNextToken();
+                if (nextToken.typeOf(TokenType::RIGHT_BRACE))
+                    throwParsingError("Trailing comma before closing brace", line);
+            }
             else if (!nextToken.typeOf(TokenType::RIGHT_BRACE))
                 throwParsingError("Comma(,) expected after a value", line);
             jsonDataMap.insert(std::pair<std::string, std::string>(lhsVal, rhsVal));

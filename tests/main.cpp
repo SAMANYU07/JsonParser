@@ -3,7 +3,7 @@
 
 int main()
 {
-    JsonParser parser("sample.json", true);
+    JsonParser parser("sample.json");
     // parser.printAllTokens();
     std::cout << parser["status_message"];
     return 0;

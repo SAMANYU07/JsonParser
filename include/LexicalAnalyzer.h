@@ -54,7 +54,11 @@ class LexicalAnalyzer
                     while (isdigit(json[pos]) || json[pos] == '.')
                     {
                         if (json[pos] == '.')
+                        {
+                            if (tmpStr.find(".") != std::string::npos)
+                                return {TokenType::INVALID, "Invalid number format"};
                             tmpStr += json[pos++];
+                        }
                         else
                             tmpStr += std::to_string(json[pos++] - '0');
                     }
@@ -68,6 +72,8 @@ class LexicalAnalyzer
                     {
                         while (!Utils::isEndOfString(json, pos))
                         {
+                            if (json[pos] == '\"' && json[pos - 1] != '\\' && isalnum(json[pos + 1]))
+                                return {TokenType::INVALID, "Unterminated string"};
                             tempValue += json[pos++];
                         }
                         if (json[pos] == '\"')
