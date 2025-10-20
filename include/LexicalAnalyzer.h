@@ -35,11 +35,6 @@ class LexicalAnalyzer
             case '\"':
             {
                 pos++;
-                // std::string tempValue;
-                // while (!Utils::isEndOfString(json, pos))
-                //     tempValue += json[pos++];
-                // pos++;
-                // return {TokenType::STRING, tempValue};
                 return {TokenType::INVERTED_COMMA, "\""};
             }
             case ':':

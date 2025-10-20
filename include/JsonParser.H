@@ -52,9 +52,6 @@ class JsonParser
             if (!nextToken.typeOf(TokenType::STRING))
             throwParsingError("String expected after \" in lhs", line);
             std::string lhsVal = nextToken.value;
-            // if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
-            //     throwParsingError("\" is expected before key", line);
-            // nextToken = lex.getNextToken();
             nextToken = lex.getNextToken();
             if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
                 throwParsingError("closing \" expected after String in lhs", line);
@@ -71,16 +68,6 @@ class JsonParser
                 rhsVal = nextToken.value;
                 nextToken = lex.getNextToken();
             }
-            // if (nextToken.typeOf(TokenType::STRING))
-            // {
-            //     nextToken = lex.getNextToken();
-            //     if (!nextToken.typeOf(TokenType::STRING) && !nextToken.typeOf(TokenType::NUMBER))
-            //         throwParsingError("String expected after \" in rhs", line);
-            //     rhsVal = nextToken.value;
-            //     nextToken = lex.getNextToken();
-            //     if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
-            //         throwParsingError("\" is expected after string in rhs", line);
-            // }
             //else rhs is num
             else if (nextToken.typeOf(TokenType::NUMBER)
                 || nextToken.typeOf(TokenType::FALSE_TOK) || nextToken.typeOf(TokenType::TRUE_TOK)
