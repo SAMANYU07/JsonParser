@@ -35,11 +35,12 @@ class LexicalAnalyzer
             case '\"':
             {
                 pos++;
-                std::string tempValue;
-                while (!Utils::isEndOfString(json, pos))
-                    tempValue += json[pos++];
-                pos++;
-                return {TokenType::STRING, tempValue};
+                // std::string tempValue;
+                // while (!Utils::isEndOfString(json, pos))
+                //     tempValue += json[pos++];
+                // pos++;
+                // return {TokenType::STRING, tempValue};
+                return {TokenType::INVERTED_COMMA, "\""};
             }
             case ':':
                 pos++;
@@ -49,7 +50,7 @@ class LexicalAnalyzer
                 return {TokenType::EOF_TOK, "\n"};
             default:
             {
-                if (isdigit(json[pos]) || json[pos] == '-')
+                if ((isdigit(json[pos]) || json[pos] == '-') && json[pos - 1] != '\"')
                 {
                     // pos++;
                     std::string tmpStr;
@@ -64,16 +65,25 @@ class LexicalAnalyzer
                     }
                     return {TokenType::NUMBER, tmpStr};
                 }
-                else if (isalnum(json[pos]))
+                else if (json[pos - 1] == '\"' || isalnum(json[pos]))
                 {
                     std::string tempValue;
-                    while ((json[pos] != '\"' && json[pos - 1] != '\\') && isalnum(json[pos]))
+                    //actually a string after "
+                    if (json[pos - 1] == '\"')
                     {
-                        tempValue += json[pos++];
+                        while (!Utils::isEndOfString(json, pos))
+                        {
+                            tempValue += json[pos++];
+                        }
+                        if (json[pos] == '\"')
+                            return {TokenType::STRING, tempValue};
                     }
-                    if (json[pos] == '\"')
-                        return {TokenType::STRING, tempValue};
-                    else if (tempValue == "true")
+                    else
+                    {
+                        while (isalnum(json[pos]))
+                            tempValue += json[pos++];
+                    }
+                    if (tempValue == "true")
                         return {TokenType::TRUE_TOK, tempValue};
                     else if (tempValue == "false")
                         return {TokenType::FALSE_TOK, tempValue};

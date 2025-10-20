@@ -48,20 +48,29 @@ class JsonParser
         {
             if (!nextToken.typeOf(TokenType::INVERTED_COMMA) && !nextToken.typeOf(TokenType::STRING))
                 throwParsingError("\" expected before string in lhs", line);
-            std::string lhsVal = nextToken.value;
             nextToken = lex.getNextToken();
-            // if (!nextToken.typeOf(TokenType::STRING))
-            //     throwParsingError("String expected after \" in lhs", line);
+            if (!nextToken.typeOf(TokenType::STRING))
+            throwParsingError("String expected after \" in lhs", line);
+            std::string lhsVal = nextToken.value;
+            // if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
+            //     throwParsingError("\" is expected before key", line);
+            // nextToken = lex.getNextToken();
+            nextToken = lex.getNextToken();
+            if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
+                throwParsingError("closing \" expected after String in lhs", line);
+            nextToken = lex.getNextToken();
             if (!nextToken.typeOf(TokenType::COLON))
                 throwParsingError(": expected after key", line);
-            // nextToken = lex.getNextToken();
-            // if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
-            //     throwParsingError("closing \" expected after String in lhs", line);
-            // nextToken = lex.getNextToken();
             nextToken = lex.getNextToken();
 
             //val is string
             std::string rhsVal;
+            if (nextToken.typeOf(TokenType::INVERTED_COMMA))
+            {
+                nextToken = lex.getNextToken();
+                rhsVal = nextToken.value;
+                nextToken = lex.getNextToken();
+            }
             // if (nextToken.typeOf(TokenType::STRING))
             // {
             //     nextToken = lex.getNextToken();
@@ -73,7 +82,7 @@ class JsonParser
             //         throwParsingError("\" is expected after string in rhs", line);
             // }
             //else rhs is num
-            if (nextToken.typeOf(TokenType::NUMBER) || nextToken.typeOf(TokenType::STRING)
+            else if (nextToken.typeOf(TokenType::NUMBER)
                 || nextToken.typeOf(TokenType::FALSE_TOK) || nextToken.typeOf(TokenType::TRUE_TOK)
                 || nextToken.typeOf(TokenType::NULL_TOK))
             {

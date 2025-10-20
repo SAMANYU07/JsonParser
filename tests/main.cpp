@@ -5,6 +5,6 @@ int main()
 {
     JsonParser parser("sample.json", true);
     // parser.printAllTokens();
-    std::cout << parser["temperature_preference"];
+    std::cout << parser["status_message"];
     return 0;
 }
