@@ -8,13 +8,14 @@
 #include "LexicalAnalyzer.h"
 #include "RuntimeError.h"
 #include "../Utils/ExecutionTimer.h"
+#include "JsonObjects/JsonObject.h"
 
 class JsonParser
 {
     private:
     std::fstream fileStream;
     std::string fileData;
-    std::map<std::string, std::string> jsonDataMap;
+    std::map<std::string, JsonObject> jsonDataMap;
     std::list<Token> tokenList;
     std::string fileName;
     public:
@@ -61,7 +62,7 @@ class JsonParser
             nextToken = lex.getNextToken();
 
             //val is string
-            std::string rhsVal;
+            JsonObject rhsVal;
             if (nextToken.typeOf(TokenType::INVERTED_COMMA))
             {
                 nextToken = lex.getNextToken();
@@ -69,7 +70,7 @@ class JsonParser
                     throwParsingError(nextToken.value, line);
                 else if (!nextToken.typeOf(TokenType::STRING))
                     throwParsingError("Something went wrong!", line);
-                rhsVal = nextToken.value;
+                rhsVal = JsonObject(nextToken);
                 lex.getNextToken();
             }
             //else rhs is num
@@ -77,7 +78,7 @@ class JsonParser
                 || nextToken.typeOf(TokenType::FALSE_TOK) || nextToken.typeOf(TokenType::TRUE_TOK)
                 || nextToken.typeOf(TokenType::NULL_TOK))
             {
-                rhsVal = nextToken.value;
+                rhsVal = JsonObject(nextToken);
             }
             else if (nextToken.typeOf(TokenType::INVALID) && nextToken.value != "INVALID")
                 throwParsingError(nextToken.value, line);
@@ -92,7 +93,7 @@ class JsonParser
             }
             else if (!nextToken.typeOf(TokenType::RIGHT_BRACE))
                 throwParsingError("Comma(,) expected after a value", line);
-            jsonDataMap.insert(std::pair<std::string, std::string>(lhsVal, rhsVal));
+            jsonDataMap.insert(std::pair<std::string, JsonObject>(lhsVal, rhsVal));
             line++;
         }
         if (nextToken.typeOf(TokenType::INVALID))
@@ -120,17 +121,17 @@ class JsonParser
         RuntimeError("Parsing error: " + errorMessage + (lineNo != -1 ? " at line: " + std::to_string(lineNo) : ""));
     }
 
-    std::string getValue(const std::string &key) const
+    JsonObject getValue(const std::string &key) const
     {
         if (!jsonDataMap.contains(key))
-            return "";
+            return JsonObject(true);
         return jsonDataMap.at(key);
     }
 
-    std::string operator [] (const std::string &key) const
+    JsonObject operator [] (const std::string &key) const
     {
         if (!jsonDataMap.contains(key))
-            return "";
+            return JsonObject(true);
         return jsonDataMap.at(key);
     }
 
@@ -141,7 +142,7 @@ class JsonParser
         for (const auto &[key, value]: jsonDataMap)
             std::cout << key << " = " << value << "\n";
     }
-    std::map<std::string, std::string>& getJsonDataMap()
+    std::map<std::string, JsonObject>& getJsonDataMap()
     {
         return this->jsonDataMap;
     }

@@ -9,10 +9,11 @@ add_library(JsonParser
         Utils/Utils.h
         include/JsonMetaData.h
         include/JsonParser.H
-        include/JsonToken.h
+        include/JsonObjects/JsonToken.h
         include/LexicalAnalyzer.h
         include/RuntimeError.h
         Utils/ExecutionTimer.h
+        include/JsonObjects/JsonObject.h
 )
 
 # Add executable (main.cpp is here, contains the entry point)
