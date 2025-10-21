@@ -124,14 +124,16 @@ class JsonParser
     JsonObject getValue(const std::string &key) const
     {
         if (!jsonDataMap.contains(key))
-            return JsonObject(true);
+            RuntimeError("Key not found: \"" + key + "\"");
+            // return JsonObject(true);
         return jsonDataMap.at(key);
     }
 
     JsonObject operator [] (const std::string &key) const
     {
         if (!jsonDataMap.contains(key))
-            return JsonObject(true);
+            RuntimeError("Key not found: \"" + key + "\"");
+            // return JsonObject(true);
         return jsonDataMap.at(key);
     }
 

@@ -5,7 +5,7 @@ int main()
 {
     JsonParser parser("sample.json");
     // parser.printAllTokens();
-    // std::cout << parser["id"];
-    parser.printParsedJson();
+    std::cout << parser["iertg"];
+    // parser.printParsedJson();
     return 0;
 }
