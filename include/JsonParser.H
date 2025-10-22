@@ -126,11 +126,11 @@ class JsonParser
         fileData.clear();
         fileStream.seekg(0, std::ios::beg);
         fileStream.seekp(0, std::ios::beg);
-        fileStream << "{";
+        fileStream << "{\n";
         std::map<std::string, JsonObject>::iterator it;
         for (it = jsonDataMap.begin(); it != jsonDataMap.end(); ++it)
         {
-            fileStream << "\"" << it->first << "\":" << "\"" << it->second << "\"";
+            fileStream << "\t\"" << it->first << "\":" << "\"" << it->second << "\"";
             if (std::next(it) != jsonDataMap.end())
                 fileStream << ",\n";
         }
