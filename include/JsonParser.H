@@ -18,6 +18,7 @@ class JsonParser
     std::map<std::string, JsonObject> jsonDataMap;
     std::list<Token> tokenList;
     std::string fileName;
+    std::string fileLocation;
     public:
 
     explicit JsonParser(const std::string &fileLocation): JsonParser(fileLocation, false){};
@@ -28,9 +29,10 @@ class JsonParser
     {
         if (const std::filesystem::path filePath = fileLocation; !std::filesystem::exists(filePath))
             return;
-        fileStream.open(fileLocation);
+        fileStream.open(fileLocation, std::ios::in | std::ios::out);
         if (!readJson())
             return;
+        this->fileLocation = fileLocation;
         if (monitorParsingTime)
             ExecutionTimer timer(restoreCout);
         parseInit();
@@ -51,7 +53,7 @@ class JsonParser
                 throwParsingError("Unexpected token found before key\n(\") expected before key", line);
             nextToken = lex.getNextToken();
             if (!nextToken.typeOf(TokenType::STRING))
-            throwParsingError("String expected after \" in lhs", line);
+                throwParsingError("String expected after \" in lhs", line);
             std::string lhsVal = nextToken.value;
             nextToken = lex.getNextToken();
             if (!nextToken.typeOf(TokenType::INVERTED_COMMA))
@@ -112,6 +114,35 @@ class JsonParser
         return true;
     }
 
+
+    bool writeJson()
+    {
+        if (!fileStream.is_open())
+            return false;
+        fileStream.close();
+        fileStream.open(fileLocation, std::ios::in | std::ios::out | std::ios::trunc);
+        if (!fileStream.is_open())
+            return false;
+        fileData.clear();
+        fileStream.seekg(0, std::ios::beg);
+        fileStream.seekp(0, std::ios::beg);
+        fileStream << "{";
+        std::map<std::string, JsonObject>::iterator it;
+        for (it = jsonDataMap.begin(); it != jsonDataMap.end(); ++it)
+        {
+            fileStream << "\"" << it->first << "\":" << "\"" << it->second << "\"";
+            if (std::next(it) != jsonDataMap.end())
+                fileStream << ",\n";
+        }
+        fileStream << "\n}";
+        return true;
+    }
+
+    ~JsonParser()
+    {
+        fileStream.close();
+    }
+
     static void throwParsingError(const std::string &errorMessage) {
         throwParsingError(errorMessage, -1);
     }
@@ -127,6 +158,14 @@ class JsonParser
             RuntimeError("Key not found: \"" + key + "\"");
             // return JsonObject(true);
         return jsonDataMap.at(key);
+    }
+
+    bool modifyValue(const std::string &key, JsonObject &value)
+    {
+        if (!jsonDataMap.contains(key))
+            return false;
+        jsonDataMap[key] = value;
+        return writeJson();
     }
 
     JsonObject operator [] (const std::string &key) const
