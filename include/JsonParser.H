@@ -140,6 +140,7 @@ class JsonParser
 
     ~JsonParser()
     {
+        writeJson();
         fileStream.close();
     }
 
@@ -168,7 +169,7 @@ class JsonParser
         return writeJson();
     }
 
-    JsonObject operator [] (const std::string &key) const
+    JsonObject &operator [] (const std::string &key)
     {
         if (!jsonDataMap.contains(key))
             RuntimeError("Key not found: \"" + key + "\"");

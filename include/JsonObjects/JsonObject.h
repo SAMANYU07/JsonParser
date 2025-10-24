@@ -92,6 +92,12 @@ class JsonObject
         return std::get<bool>(value);
     }
 
+    JsonObject operator = (const Token &jsonToken)
+    {
+        convertTokenAndSetValue(jsonToken);
+        return *this;
+    }
+
 
 };
 
