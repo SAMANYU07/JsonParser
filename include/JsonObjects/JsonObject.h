@@ -121,6 +121,11 @@ class JsonObject
         return JsonObject({TokenType::EMPTY, ""});
     }
 
+    JsonObject operator[](const int &index)
+    {
+        return getListElement(index);
+    }
+
 
 };
 
