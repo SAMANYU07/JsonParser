@@ -190,6 +190,13 @@ class JsonParser
         }
     }
 
+    void erase(const std::string &key)
+    {
+        if (!jsonDataMap.contains(key))
+            return;
+        jsonDataMap.erase(key);
+    }
+
     void printParsedJson() const
     {
         if (jsonDataMap.empty())

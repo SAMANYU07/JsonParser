@@ -12,6 +12,11 @@ int main()
 
     //adding a new value
     parser["secondary_currency"] = token2;
+
+    //deleting a value
+    parser.erase("secondary_currency");
+
+
     /*
     JsonObject jsonData(token);
     if (bool res = parser.modifyValue("preferred_currency", jsonData); !res)
