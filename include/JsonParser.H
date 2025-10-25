@@ -67,7 +67,7 @@ class JsonParser
             //val is list
             if (nextToken.typeOf(TokenType::LEFT_SQUARE_BRACKET))
             {
-                std::list<JsonObject> elementList;
+                std::vector<JsonObject> elementList;
                 do
                 {
                     nextToken = lex.getNextToken();
@@ -147,7 +147,7 @@ class JsonParser
             if (!it->second.getListElements().empty())
             {
                 fileStream << "\t\"" << it->first << "\": [ ";
-                std::list<JsonObject> elements = it->second.getListElements();
+                std::vector<JsonObject> elements = it->second.getListElements();
                 for (auto it1 = elements.begin() ; it1 != elements.end(); ++it1)
                 {
                     fileStream << *it1 << " ";

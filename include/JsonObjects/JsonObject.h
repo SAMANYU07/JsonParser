@@ -14,7 +14,7 @@ using JsonValue = std::variant<double, std::string, bool, std::monostate>;
 class JsonObject
 {
     JsonValue value;
-    std::list<JsonObject> listElements;
+    std::vector<JsonObject> listElements;
     public:
     bool isEmpty = true;
     explicit JsonObject()
@@ -29,7 +29,7 @@ class JsonObject
     {
         convertTokenAndSetValue(jsonToken);
     }
-    explicit JsonObject(const std::list<JsonObject> &jsonObjectList)
+    explicit JsonObject(const std::vector<JsonObject> &jsonObjectList)
     {
         this->listElements = jsonObjectList;
         isEmpty = false;
@@ -109,9 +109,16 @@ class JsonObject
         return isEmpty;
     }
 
-    std::list<JsonObject> getListElements() const
+    std::vector<JsonObject> getListElements() const
     {
         return this->listElements;
+    }
+
+    JsonObject getListElement(const int &index)
+    {
+        if (!this->listElements.at(index).empty())
+            return this->listElements.at(index);
+        return JsonObject({TokenType::EMPTY, ""});
     }
 
 
@@ -122,9 +129,7 @@ std::ostream &operator << (std::ostream &COUT, const JsonObject &jsonObject)
     if (!jsonObject.getListElements().empty())
     {
         for (auto &element : jsonObject.getListElements())
-        {
             COUT << element << " ";
-        }
     }
     else
     {

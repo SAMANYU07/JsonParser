@@ -25,7 +25,7 @@ int main()
         std::cout << "modifyValue(preferred_currency) success" << std::endl;
      */
 
-    std::cout << parser["scores"];
+    std::cout << parser["scores"].getListElement(1);
 
     // parser.printAllTokens();
     return 0;
