@@ -109,7 +109,7 @@ class JsonObject
         return isEmpty;
     }
 
-    std::list<JsonObject> getListElements()
+    std::list<JsonObject> getListElements() const
     {
         return this->listElements;
     }
@@ -119,18 +119,28 @@ class JsonObject
 
 std::ostream &operator << (std::ostream &COUT, const JsonObject &jsonObject)
 {
-    std::visit([&COUT, jsonObject](const auto &jsonValue) {
-        if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::monostate>)
-            COUT << "null";
-        else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::string>)
-            COUT << jsonObject.asString();
-        else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, double>)
-            COUT << jsonObject.asNumber();
-        else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, bool>)
-            COUT << jsonObject.asBool();
-        else
-            RuntimeError("Unsupported object type");
-    }, jsonObject.getValue());
+    if (!jsonObject.getListElements().empty())
+    {
+        for (auto &element : jsonObject.getListElements())
+        {
+            COUT << element << " ";
+        }
+    }
+    else
+    {
+        std::visit([&COUT, jsonObject](const auto &jsonValue) {
+            if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::monostate>)
+                COUT << "null";
+            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::string>)
+                COUT << jsonObject.asString();
+            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, double>)
+                COUT << jsonObject.asNumber();
+            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, bool>)
+                COUT << jsonObject.asBool();
+            else
+                RuntimeError("Unsupported object type");
+        }, jsonObject.getValue());
+    }
     return COUT;
 }
 

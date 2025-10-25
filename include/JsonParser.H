@@ -146,7 +146,7 @@ class JsonParser
         {
             if (!it->second.getListElements().empty())
             {
-                fileStream << "\t\"" << it->first << "\" : [ ";
+                fileStream << "\t\"" << it->first << "\": [ ";
                 std::list<JsonObject> elements = it->second.getListElements();
                 for (auto it1 = elements.begin() ; it1 != elements.end(); ++it1)
                 {
