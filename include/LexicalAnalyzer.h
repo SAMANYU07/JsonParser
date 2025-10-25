@@ -32,6 +32,12 @@ class LexicalAnalyzer
             case ',':
                 pos++;
                 return {TokenType::COMMA, ","};
+            case '[':
+                pos++;
+                return {TokenType::LEFT_SQUARE_BRACKET, "["};
+            case ']':
+                pos++;
+                return {TokenType::RIGHT_SQUARE_BRACKET, "]"};
             case '\"':
             {
                 pos++;

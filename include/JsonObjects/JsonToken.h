@@ -15,7 +15,9 @@ enum class TokenType
     EOF_TOK,
     COLON,
     INVALID,
-    EMPTY
+    EMPTY,
+    LEFT_SQUARE_BRACKET,
+    RIGHT_SQUARE_BRACKET
 };
 
 struct Token

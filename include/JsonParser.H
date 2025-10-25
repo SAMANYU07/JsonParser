@@ -63,9 +63,24 @@ class JsonParser
                 throwParsingError(": expected after key", line);
             nextToken = lex.getNextToken();
 
-            //val is string
             JsonObject rhsVal;
-            if (nextToken.typeOf(TokenType::INVERTED_COMMA))
+            //val is list
+            if (nextToken.typeOf(TokenType::LEFT_SQUARE_BRACKET))
+            {
+                std::list<JsonObject> elementList;
+                do
+                {
+                    nextToken = lex.getNextToken();
+                    JsonObject element1(nextToken);
+                    elementList.push_back(element1);
+                    nextToken = lex.getNextToken();
+                } while (nextToken.typeOf(TokenType::COMMA));
+                if (!nextToken.typeOf(TokenType::RIGHT_SQUARE_BRACKET))
+                    throwParsingError("Unterminated list", line);
+                rhsVal = JsonObject(elementList);
+            }
+            //val is string
+            else if (nextToken.typeOf(TokenType::INVERTED_COMMA))
             {
                 nextToken = lex.getNextToken();
                 if (nextToken.typeOf(TokenType::INVALID))
@@ -127,12 +142,26 @@ class JsonParser
         fileStream.seekg(0, std::ios::beg);
         fileStream.seekp(0, std::ios::beg);
         fileStream << "{\n";
-        std::map<std::string, JsonObject>::iterator it;
-        for (it = jsonDataMap.begin(); it != jsonDataMap.end(); ++it)
+        for (std::map<std::string, JsonObject>::iterator it = jsonDataMap.begin(); it != jsonDataMap.end(); ++it)
         {
-            fileStream << "\t\"" << it->first << "\":" << "\"" << it->second << "\"";
-            if (std::next(it) != jsonDataMap.end())
-                fileStream << ",\n";
+            if (!it->second.getListElements().empty())
+            {
+                fileStream << "\t\"" << it->first << "\" : [ ";
+                std::list<JsonObject> elements = it->second.getListElements();
+                for (auto it1 = elements.begin() ; it1 != elements.end(); ++it1)
+                {
+                    fileStream << *it1 << " ";
+                    if (std::next(it1) != elements.end())
+                        fileStream << ", ";
+                }
+                fileStream << "]";
+            }
+            else
+            {
+                fileStream << "\t\"" << it->first << "\":" << "\"" << it->second << "\"";
+            }
+                if (std::next(it) != jsonDataMap.end())
+                    fileStream << ",\n";
         }
         fileStream << "\n}";
         return true;
@@ -162,7 +191,7 @@ class JsonParser
         return jsonDataMap.at(key);
     }
 
-    bool modifyValue(const std::string &key, JsonObject &value)
+    bool modifyValue(const std::string &key, const JsonObject &value)
     {
         if (!jsonDataMap.contains(key))
             return false;

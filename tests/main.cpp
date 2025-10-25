@@ -8,13 +8,13 @@ int main()
     Token token2(TokenType::STRING, "USD");
 
     //modifying an existing value
-    parser["preferred_currency"] = token;
-
-    //adding a new value
-    parser["secondary_currency"] = token2;
-
-    //deleting a value
-    parser.erase("secondary_currency");
+    // parser["preferred_currency"] = token;
+    //
+    // //adding a new value
+    // parser["secondary_currency"] = token2;
+    //
+    // //deleting a value
+    // parser.erase("secondary_currency");
 
 
     /*
@@ -24,5 +24,7 @@ int main()
     else
         std::cout << "modifyValue(preferred_currency) success" << std::endl;
      */
+
+    parser.printAllTokens();
     return 0;
 }

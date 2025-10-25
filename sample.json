@@ -26,5 +26,6 @@
     "email_verified": true,
     "timezone": "Asia/Tokyo",
     "status_message": "Working on parser logic 😎",
-    "checksum": "abc123def456ghi789"
+    "checksum": "abc123def456ghi789",
+    "scores": [1, 2]
 }
