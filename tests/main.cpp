@@ -4,12 +4,14 @@
 int main()
 {
     JsonParser parser("sample.json");
-    // parser.printAllTokens();
-    // std::cout << parser["iertg"];
-    // parser.printParsedJson();
     Token token(TokenType::STRING, "INR");
+    Token token2(TokenType::STRING, "USD");
+
+    //modifying an existing value
     parser["preferred_currency"] = token;
 
+    //adding a new value
+    parser["secondary_currency"] = token2;
     /*
     JsonObject jsonData(token);
     if (bool res = parser.modifyValue("preferred_currency", jsonData); !res)

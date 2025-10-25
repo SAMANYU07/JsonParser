@@ -42,6 +42,7 @@ class JsonObject
                 break;
             }
             case TokenType::STRING:
+            case TokenType::EMPTY:
             {
                 value = jsonToken.value;
                 break;
@@ -96,6 +97,10 @@ class JsonObject
     {
         convertTokenAndSetValue(jsonToken);
         return *this;
+    }
+
+    bool empty() const {
+        return isEmpty;
     }
 
 

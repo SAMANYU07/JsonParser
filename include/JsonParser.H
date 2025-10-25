@@ -140,6 +140,7 @@ class JsonParser
 
     ~JsonParser()
     {
+        removeEmptyValues();
         writeJson();
         fileStream.close();
     }
@@ -172,9 +173,21 @@ class JsonParser
     JsonObject &operator [] (const std::string &key)
     {
         if (!jsonDataMap.contains(key))
-            RuntimeError("Key not found: \"" + key + "\"");
+        {
+            JsonObject newVal = JsonObject({TokenType::EMPTY, ""});
+            jsonDataMap.insert(std::pair<std::string, JsonObject>(key, newVal));
+        }
             // return JsonObject(true);
         return jsonDataMap.at(key);
+    }
+
+    void removeEmptyValues()
+    {
+        for (auto it = jsonDataMap.begin(); it != jsonDataMap.end(); ++it)
+        {
+            if (it->second.empty())
+                jsonDataMap.erase(it);
+        }
     }
 
     void printParsedJson() const

@@ -14,7 +14,8 @@ enum class TokenType
     INVERTED_COMMA,
     EOF_TOK,
     COLON,
-    INVALID
+    INVALID,
+    EMPTY
 };
 
 struct Token
