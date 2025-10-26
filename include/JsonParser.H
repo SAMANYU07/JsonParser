@@ -144,10 +144,10 @@ class JsonParser
         fileStream << "{\n";
         for (std::map<std::string, JsonObject>::iterator it = jsonDataMap.begin(); it != jsonDataMap.end(); ++it)
         {
-            if (!it->second.getListElements().empty())
+            if (!it->second.asList().empty())
             {
                 fileStream << "\t\"" << it->first << "\": [ ";
-                std::vector<JsonObject> elements = it->second.getListElements();
+                std::vector<JsonObject> elements = it->second.asList();
                 for (auto it1 = elements.begin() ; it1 != elements.end(); ++it1)
                 {
                     fileStream << *it1 << " ";
@@ -230,7 +230,7 @@ class JsonParser
     {
         if (jsonDataMap.empty())
             return;
-        for (const auto &[key, value]: jsonDataMap)
+        for (auto [key, value]: jsonDataMap)
             std::cout << key << " = " << value << "\n";
     }
     std::map<std::string, JsonObject>& getJsonDataMap()

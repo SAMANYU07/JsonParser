@@ -81,7 +81,7 @@ class JsonObject
         value = static_cast<T>(value);
     }
 
-    JsonValue getValue() const
+    [[nodiscard]] JsonValue getValue() const
     {
         return value;
     }
@@ -109,19 +109,17 @@ class JsonObject
         return isEmpty;
     }
 
-    std::vector<JsonObject> getListElements() const
+    std::vector<JsonObject> &asList()
     {
         return this->listElements;
     }
 
-    JsonObject getListElement(const int &index)
+    JsonObject &getListElement(const int &index)
     {
-        if (!this->listElements.at(index).empty())
-            return this->listElements.at(index);
-        return JsonObject({TokenType::EMPTY, ""});
+        return this->listElements.at(index);
     }
 
-    JsonObject operator[](const int &index)
+    JsonObject &operator[](const int &index)
     {
         return getListElement(index);
     }
@@ -129,16 +127,16 @@ class JsonObject
 
 };
 
-std::ostream &operator << (std::ostream &COUT, const JsonObject &jsonObject)
+inline  std::ostream &operator << (std::ostream &COUT, JsonObject &jsonObject)
 {
-    if (!jsonObject.getListElements().empty())
+    if (!jsonObject.asList().empty())
     {
-        for (auto &element : jsonObject.getListElements())
+        for (auto &element : jsonObject.asList())
             COUT << element << " ";
     }
     else
     {
-        std::visit([&COUT, jsonObject](const auto &jsonValue) {
+        std::visit([&COUT, jsonObject]([[maybe_unused]] const auto &jsonValue) {
             if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::monostate>)
                 COUT << "null";
             else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::string>)
