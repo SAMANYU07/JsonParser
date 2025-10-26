@@ -25,16 +25,17 @@ int main()
         std::cout << "modifyValue(preferred_currency) success" << std::endl;
      */
 
-    std::cout << parser["scores"][1] << std::endl;
+    // std::cout << parser["scores"][1] << std::endl;
 
     parser["scores"][1] = {TokenType::NUMBER, "8"};
 
     // parser["scores"].asList().push_back(JsonObject({TokenType::NUMBER, "32"}));
 
-    parser["scores"].asList().pop_back();
+    // parser["scores"].asList().pop_back();
 
     std::cout << parser["scores"][1];
 
     // parser.printAllTokens();
+    // parser.printParsedJson();
     return 0;
 }

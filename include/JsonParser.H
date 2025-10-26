@@ -158,7 +158,12 @@ class JsonParser
             }
             else
             {
-                fileStream << "\t\"" << it->first << "\":" << "\"" << it->second << "\"";
+                JsonObject obj = it->second;
+                JsonValue value = obj.getValue();
+                if (std::holds_alternative<std::string>(value))
+                    fileStream << "\t\"" << it->first << "\":" << "\"" << it->second << "\"";
+                else
+                    fileStream << "\t\"" << it->first << "\":" << "" << it->second << "";
             }
                 if (std::next(it) != jsonDataMap.end())
                     fileStream << ",\n";

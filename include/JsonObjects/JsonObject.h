@@ -74,11 +74,9 @@ class JsonObject
     }
 
     template <typename T>
-    void setValue(const Token &jsonToken)
+    void setValue(const T &jsonValue)
     {
-        std::stringstream ss;
-        ss << jsonToken.value;
-        value = static_cast<T>(value);
+        value = jsonValue;
     }
 
     [[nodiscard]] JsonValue getValue() const
@@ -102,6 +100,13 @@ class JsonObject
     JsonObject operator = (const Token &jsonToken)
     {
         convertTokenAndSetValue(jsonToken);
+        return *this;
+    }
+
+    template <typename T>
+    JsonObject operator = (const T &jsonValue)
+    {
+        setValue(jsonValue);
         return *this;
     }
 
@@ -144,7 +149,12 @@ inline  std::ostream &operator << (std::ostream &COUT, JsonObject &jsonObject)
             else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, double>)
                 COUT << jsonObject.asNumber();
             else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, bool>)
-                COUT << jsonObject.asBool();
+            {
+                if (jsonObject.asBool())
+                    COUT << "true";
+                else
+                    COUT << "false";
+            }
             else
                 RuntimeError("Unsupported object type");
         }, jsonObject.getValue());
