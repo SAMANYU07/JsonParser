@@ -76,7 +76,10 @@ class JsonObject
     template <typename T>
     void setValue(const T &jsonValue)
     {
-        value = jsonValue;
+        if constexpr  (std::is_same_v<T, int>)
+            value = static_cast<double>(jsonValue);
+        else
+            value = jsonValue;
     }
 
     [[nodiscard]] JsonValue getValue() const
