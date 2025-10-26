@@ -17,7 +17,8 @@ enum class TokenType
     INVALID,
     EMPTY,
     LEFT_SQUARE_BRACKET,
-    RIGHT_SQUARE_BRACKET
+    RIGHT_SQUARE_BRACKET,
+    FLOATING_POINT,
 };
 
 struct Token

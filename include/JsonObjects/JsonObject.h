@@ -15,6 +15,8 @@ class JsonObject
 {
     JsonValue value;
     std::vector<JsonObject> listElements;
+    // todo: try eliminating objectType from this class
+    TokenType objectType;
     public:
     bool isEmpty = true;
     explicit JsonObject()
@@ -25,7 +27,7 @@ class JsonObject
     {
         isEmpty = _isEmpty;
     }
-    explicit  JsonObject(const Token &jsonToken)
+    explicit  JsonObject(const Token &jsonToken): objectType(jsonToken.type)
     {
         convertTokenAndSetValue(jsonToken);
     }
@@ -49,6 +51,7 @@ class JsonObject
             }
             case TokenType::STRING:
             case TokenType::EMPTY:
+            case TokenType::FLOATING_POINT:
             {
                 value = jsonToken.value;
                 break;
@@ -132,6 +135,13 @@ class JsonObject
         return getListElement(index);
     }
 
+    [[nodiscard]] bool typeOf(const TokenType &tokenType) const
+    {
+        if (this->objectType == tokenType)
+            return true;
+        return false;
+    }
+
 
 };
 
@@ -147,7 +157,8 @@ inline  std::ostream &operator << (std::ostream &COUT, JsonObject &jsonObject)
         std::visit([&COUT, jsonObject]([[maybe_unused]] const auto &jsonValue) {
             if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::monostate>)
                 COUT << "null";
-            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::string>)
+            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::string>
+                || jsonObject.typeOf(TokenType::FLOATING_POINT))
                 COUT << jsonObject.asString();
             else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, double>)
                 COUT << jsonObject.asNumber();

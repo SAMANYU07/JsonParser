@@ -68,6 +68,8 @@ class LexicalAnalyzer
                         else
                             tmpStr += std::to_string(json[pos++] - '0');
                     }
+                    if (tmpStr.find(".") != std::string::npos)
+                        return {TokenType::FLOATING_POINT, tmpStr};
                     return {TokenType::NUMBER, tmpStr};
                 }
                 else if (json[pos - 1] == '\"' || isalnum(json[pos]))

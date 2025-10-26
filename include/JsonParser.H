@@ -93,7 +93,7 @@ class JsonParser
             //else rhs is num
             else if (nextToken.typeOf(TokenType::NUMBER)
                 || nextToken.typeOf(TokenType::FALSE_TOK) || nextToken.typeOf(TokenType::TRUE_TOK)
-                || nextToken.typeOf(TokenType::NULL_TOK))
+                || nextToken.typeOf(TokenType::NULL_TOK) || nextToken.typeOf(TokenType::FLOATING_POINT))
             {
                 rhsVal = JsonObject(nextToken);
             }
@@ -163,7 +163,7 @@ class JsonParser
             {
                 JsonObject obj = it->second;
                 JsonValue value = obj.getValue();
-                if (std::holds_alternative<std::string>(value))
+                if (std::holds_alternative<std::string>(value) && !obj.typeOf(TokenType::FLOATING_POINT))
                     fileStream << "\t\"" << it->first << "\":" << "\"" << it->second << "\"";
                 else
                     fileStream << "\t\"" << it->first << "\":" << "" << it->second << "";
