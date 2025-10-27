@@ -22,7 +22,7 @@ class Utils
     }
 
     static bool isEndOfString(const std::string &str, const int &pos) {
-        if (str[pos] == '\"' && (str[pos + 1] == ',' || str[pos + 1] == '}' || str[pos + 1] == ':'))
+        if (str[pos] == '\"' && (str[pos + 1] == ',' || str[pos + 1] == '}' || str[pos + 1] == ':' || str[pos + 1] == ']'))
             return true;
         return false;
     }

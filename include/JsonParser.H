@@ -71,7 +71,15 @@ class JsonParser
                 do
                 {
                     nextToken = lex.getNextToken();
-                    JsonObject element1(nextToken);
+                    JsonObject element1;
+                    if (nextToken.typeOf(TokenType::INVERTED_COMMA))
+                    {
+                        nextToken = lex.getNextToken();
+                        element1.setJsonObject(nextToken);
+                        lex.getNextToken();
+                    }
+                    else
+                        element1.setJsonObject(nextToken);
                     elementList.push_back(element1);
                     nextToken = lex.getNextToken();
                 } while (nextToken.typeOf(TokenType::COMMA));
@@ -146,16 +154,16 @@ class JsonParser
         {
             if (!it->second.asList().empty())
             {
-                fileStream << "\t\"" << it->first << "\": [ ";
+                fileStream << "\t\"" << it->first << "\": [";
                 std::vector<JsonObject> elements = it->second.asList();
                 for (auto it1 = elements.begin() ; it1 != elements.end(); ++it1)
                 {
                     if (std::holds_alternative<std::string>(it1->getValue()))
-                        fileStream << "\"" << *it1 << "\" ";
+                        fileStream << "\"" << *it1 << "\"";
                     else
                         fileStream << *it1 << " ";
                     if (std::next(it1) != elements.end())
-                        fileStream << ", ";
+                        fileStream << ",";
                 }
                 fileStream << "]";
             }

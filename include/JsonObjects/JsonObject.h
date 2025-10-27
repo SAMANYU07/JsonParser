@@ -36,6 +36,10 @@ class JsonObject
         this->listElements = jsonObjectList;
         isEmpty = false;
     }
+    void setJsonObject(const Token &jsonToken)
+    {
+        convertTokenAndSetValue(jsonToken);
+    }
 
     void convertTokenAndSetValue(const Token &jsonToken)
     {
