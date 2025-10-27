@@ -158,7 +158,8 @@ class JsonParser
                 std::vector<JsonObject> elements = it->second.asList();
                 for (auto it1 = elements.begin() ; it1 != elements.end(); ++it1)
                 {
-                    if (std::holds_alternative<std::string>(it1->getValue()))
+                    if (std::holds_alternative<std::string>(it1->getValue()) &&
+                        !it1->typeOf(TokenType::FLOATING_POINT))
                         fileStream << "\"" << *it1 << "\"";
                     else
                         fileStream << *it1 << " ";

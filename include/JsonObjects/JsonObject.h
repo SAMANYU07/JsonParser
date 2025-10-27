@@ -9,7 +9,7 @@
 #include <variant>
 #include <sstream>
 
-using JsonValue = std::variant<double, std::string, bool, std::monostate>;
+using JsonValue = std::variant<int, std::string, bool, std::monostate>;
 
 class JsonObject
 {
@@ -48,7 +48,7 @@ class JsonObject
             case TokenType::NUMBER:
             {
                 std::stringstream ss(jsonToken.value);
-                double n;
+                int n;
                 ss >> n;
                 value = n;
                 break;
@@ -83,8 +83,13 @@ class JsonObject
     template <typename T>
     void setValue(const T &jsonValue)
     {
-        if constexpr  (std::is_same_v<T, int>)
-            value = static_cast<double>(jsonValue);
+        if constexpr  (std::is_same_v<T, float> || std::is_same_v<T, double>)
+        {
+            std::stringstream ss;
+            ss << jsonValue;
+            value = ss.str();
+            objectType = TokenType::FLOATING_POINT;
+        }
         else
             value = jsonValue;
     }
@@ -100,7 +105,7 @@ class JsonObject
     }
     int asNumber() const
     {
-        return std::get<double>(value);
+        return std::get<int>(value);
     }
     bool asBool() const
     {
@@ -164,7 +169,7 @@ inline  std::ostream &operator << (std::ostream &COUT, JsonObject &jsonObject)
             else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::string>
                 || jsonObject.typeOf(TokenType::FLOATING_POINT))
                 COUT << jsonObject.asString();
-            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, double>)
+            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, int>)
                 COUT << jsonObject.asNumber();
             else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, bool>)
             {
