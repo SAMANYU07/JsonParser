@@ -4,7 +4,7 @@ project(JsonParser)
 set(CMAKE_CXX_STANDARD 20)
 
 # Add library (your parser logic, headers, etc.)
-add_library(JsonParser
+add_library(JsonParser SHARED
         src/dummy.cpp           # <- NEW: even empty, just to set language
         Utils/Utils.h
         include/JsonMetaData.h
