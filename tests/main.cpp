@@ -37,6 +37,6 @@ int main()
     // std::cout << parser["scores"][1];
 
     // parser.printAllTokens();
-    // parser.printParsedJson();
+    parser.printParsedJson();
     return 0;
 }

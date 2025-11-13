@@ -8,6 +8,7 @@
 #include "JsonToken.h"
 #include <variant>
 #include <sstream>
+#include <vector>
 
 using JsonValue = std::variant<int, std::string, bool, std::monostate>;
 
