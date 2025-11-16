@@ -4,6 +4,13 @@
 
 #include "JsonParser.H"
 
+JsonParser::~JsonParser()
+{
+    removeEmptyValues();
+    writeJson();
+    fileStream.close();
+}
+
 void JsonParser::parseInit()
 {
     LexicalAnalyzer lex(fileData);

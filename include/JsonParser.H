@@ -46,12 +46,7 @@ class JsonParser
 
     bool writeJson();
 
-    ~JsonParser()
-    {
-        removeEmptyValues();
-        writeJson();
-        fileStream.close();
-    }
+    ~JsonParser();
 
     static void throwParsingError(const std::string &errorMessage);
 
