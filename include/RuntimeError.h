@@ -11,15 +11,7 @@ class RuntimeError
         throw std::runtime_error(Utils::makeRed(errorMessage));
     }
 
-    void setErrorMessage(const std::string &message)
-    {
-        this->errorMessage = message;
-    }
+    void setErrorMessage(const std::string &message);
 
-    void throwError() const
-    {
-        if (errorMessage.empty())
-            return;
-        throw std::runtime_error(Utils::makeRed(errorMessage));
-    }
+    void throwError() const;
 };
