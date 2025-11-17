@@ -42,44 +42,8 @@ class JsonObject
         convertTokenAndSetValue(jsonToken);
     }
 
-    void convertTokenAndSetValue(const Token &jsonToken)
-    {
-        switch (jsonToken.type)
-        {
-            case TokenType::NUMBER:
-            {
-                std::stringstream ss(jsonToken.value);
-                int n;
-                ss >> n;
-                value = n;
-                break;
-            }
-            case TokenType::STRING:
-            case TokenType::EMPTY:
-            case TokenType::FLOATING_POINT:
-            {
-                value = jsonToken.value;
-                break;
-            }
-            case TokenType::NULL_TOK:
-            {
-                value = std::monostate{};
-                break;
-            }
-            case TokenType::TRUE_TOK:
-            case TokenType::FALSE_TOK:
-            {
-                std::stringstream ss(jsonToken.value);
-                bool b;
-                ss >> std::boolalpha >> b;
-                value = b;
-                break;
-            }
-            default:
-                RuntimeError("Something went wrong!");
-        }
-        isEmpty = false;
-    }
+    //not shifting logic of templates to cpp
+    void convertTokenAndSetValue(const Token &jsonToken);
 
     template <typename T>
     void setValue(const T &jsonValue)
@@ -95,23 +59,11 @@ class JsonObject
             value = jsonValue;
     }
 
-    [[nodiscard]] JsonValue getValue() const
-    {
-        return value;
-    }
+    [[nodiscard]] JsonValue getValue() const;
 
-    std::string asString() const
-    {
-        return std::get<std::string>(value);
-    }
-    int asNumber() const
-    {
-        return std::get<int>(value);
-    }
-    bool asBool() const
-    {
-        return std::get<bool>(value);
-    }
+    std::string asString() const;
+    int asNumber() const;
+    bool asBool() const;
 
     JsonObject operator = (const Token &jsonToken)
     {
@@ -126,64 +78,19 @@ class JsonObject
         return *this;
     }
 
-    bool empty() const {
-        return isEmpty;
-    }
+    bool empty() const;
 
-    std::vector<JsonObject> &asList()
-    {
-        return this->listElements;
-    }
+    std::vector<JsonObject> &asList();
 
-    JsonObject &getListElement(const int &index)
-    {
-        return this->listElements.at(index);
-    }
+    JsonObject &getListElement(const int &index);
 
-    JsonObject &operator[](const int &index)
-    {
-        return getListElement(index);
-    }
+    JsonObject &operator[](const int &index);
 
-    [[nodiscard]] bool typeOf(const TokenType &tokenType) const
-    {
-        if (this->objectType == tokenType)
-            return true;
-        return false;
-    }
+    [[nodiscard]] bool typeOf(const TokenType &tokenType) const;
 
 
 };
 
-inline  std::ostream &operator << (std::ostream &COUT, JsonObject &jsonObject)
-{
-    if (!jsonObject.asList().empty())
-    {
-        for (auto &element : jsonObject.asList())
-            COUT << element << " ";
-    }
-    else
-    {
-        std::visit([&COUT, jsonObject]([[maybe_unused]] const auto &jsonValue) {
-            if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::monostate>)
-                COUT << "null";
-            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, std::string>
-                || jsonObject.typeOf(TokenType::FLOATING_POINT))
-                COUT << jsonObject.asString();
-            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, int>)
-                COUT << jsonObject.asNumber();
-            else if (std::is_same_v<std::decay_t<decltype(jsonValue)>, bool>)
-            {
-                if (jsonObject.asBool())
-                    COUT << "true";
-                else
-                    COUT << "false";
-            }
-            else
-                RuntimeError("Unsupported object type");
-        }, jsonObject.getValue());
-    }
-    return COUT;
-}
+ std::ostream &operator << (std::ostream &COUT, JsonObject &jsonObject);
 
 #endif //JSONPARSER_JSONOBJECT_H
