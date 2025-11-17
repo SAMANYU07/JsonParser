@@ -30,64 +30,11 @@ struct Token
 
     Token(const TokenType type, std::string value): type(type), value(std::move(value)) {}
 
-    [[nodiscard]] bool typeOf(const TokenType &tokenType) const
-    {
-        if (this->type == tokenType)
-            return true;
-        return false;
-    }
+    [[nodiscard]] bool typeOf(const TokenType &tokenType) const;
 
-    void setValue(const std::string &newValue)
-    {
-        this->value = newValue;
-    }
+    void setValue(const std::string &newValue);
 
-    void setType(const TokenType &tokenType)
-    {
-        this->type = tokenType;
-    }
+    void setType(const TokenType &tokenType);
 };
 
-inline std::ostream& operator << (std::ostream&COUT, const TokenType tokenType)
-{
-    switch (tokenType)
-    {
-        case TokenType::NUMBER:
-            COUT << "NUMBER";
-            break;
-        case TokenType::STRING:
-            COUT << "STRING";
-            break;
-        case TokenType::TRUE_TOK:
-            COUT << "TRUE_TOK";
-            break;
-        case TokenType::FALSE_TOK:
-            COUT << "FALSE_TOK";
-            break;
-        case TokenType::NULL_TOK:
-            COUT << "NULL_TOK";
-            break;
-        case TokenType::COMMA:
-            COUT << "COMMA";
-            break;
-        case TokenType::LEFT_BRACE:
-            COUT << "LEFT_BRACE";
-            break;
-        case TokenType::RIGHT_BRACE:
-            COUT << "RIGHT_BRACE";
-            break;
-        case TokenType::INVERTED_COMMA:
-            COUT << "INVERTED_COMMA";
-            break;
-        case TokenType::EOF_TOK:
-            COUT << "EOF_TOK";
-            break;
-        case TokenType::COLON:
-            COUT << "COLON";
-            break;
-        case TokenType::INVALID:
-            COUT << "INVALID";
-            break;
-    }
-    return COUT;
-}
+std::ostream& operator << (std::ostream&COUT, const TokenType tokenType);
